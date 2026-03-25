@@ -1,14 +1,13 @@
 from fastapi import FastAPI
 from app.db.database import engine, Base
-from app.api import auth
+from app.api import auth, photo
 
-# Tạo bảng
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Include router
 app.include_router(auth.router)
+app.include_router(photo.router)
 
 
 @app.get("/")
