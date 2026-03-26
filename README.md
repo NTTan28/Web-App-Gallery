@@ -90,3 +90,18 @@ _____________________________________________________
 12. Gọi: GET /photos/search/?title=Ảnh ---> Trả về ảnh có chữ “Ảnh” trong title
 13. Gọi: PUT /photos/{photo_id} (Ví dụ: PUT /photos/1) ---> DB updated, gọi GET thấy dữ liệu mới
 14. Gọi: DELETE /photos/1 (Database: record biến mất; Folder: file ảnh bị xóa)
+
+
+### PART 5:
+
+Cài đặt:
+- Đường dẫn: D:\HomeCode\App_Development\Web_App_Gallery\frontend>
++ npx create-react-app . (tạo folder frontend nhưng chưa có src)
++ (HOẶC) Nếu chưa có frontend, npx create-react-app gallery-frontend
+
+Tiếp tục chạy:
++ npm install axios react-router-dom
+
+###### Chạy chương trình
++ Vào backend: python -m uvicorn app.main:app --reload
++ Vào frontend: npm start
