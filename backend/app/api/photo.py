@@ -4,35 +4,39 @@ from typing import List
 
 from app.db.models import Photo
 from app.api.deps import get_db, get_current_user
-from app.schemas.photo import PhotoResponse
+from app.schemas.photo import PhotoResponse, PhotoUpdate
 from app.utils.file_handler import save_file, delete_file
 
 router = APIRouter(prefix="/photos", tags=["Photos"])
 
 
-# A. Upload Photo
-@router.post("/", response_model=PhotoResponse)
-def upload_photo(
-    title: str = Form(...),
-    description: str = Form(...),
-    file: UploadFile = File(...),
+# A. Upload MANY Photos 🔥
+@router.post("/", response_model=List[PhotoResponse])
+def upload_photos(
+    title: str = Form(""),
+    description: str = Form(""),
+    files: List[UploadFile] = File(...),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    file_path = save_file(file)
+    photos = []
 
-    photo = Photo(
-        title=title,
-        description=description,
-        image_url=file_path,
-        user_id=current_user.id,
-    )
+    for file in files:
+        file_path = save_file(file)
 
-    db.add(photo)
+        photo = Photo(
+            title=title,
+            description=description,
+            image_url=file_path,
+            user_id=current_user.id,
+        )
+
+        db.add(photo)
+        photos.append(photo)
+
     db.commit()
-    db.refresh(photo)
 
-    return photo
+    return photos
 
 
 # B. Get all photos (current user)
@@ -59,8 +63,25 @@ def get_photo(
     return photo
 
 
+# ❤️ G. LIKE PHOTO (THÊM MỚI)
+@router.post("/{photo_id}/like")
+def like_photo(
+    photo_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    photo = db.query(Photo).filter(Photo.id == photo_id).first()
+
+    if not photo:
+        raise HTTPException(status_code=404, detail="Photo not found")
+
+    photo.likes += 1
+    db.commit()
+
+    return {"likes": photo.likes}
+
+
 # D. Update photo
-from app.schemas.photo import PhotoUpdate
 @router.put("/{photo_id}")
 def update_photo(
     photo_id: int,
@@ -93,7 +114,6 @@ def delete_photo(
     if not photo or photo.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Photo not found")
 
-    # Xóa file
     delete_file(photo.image_url)
 
     db.delete(photo)

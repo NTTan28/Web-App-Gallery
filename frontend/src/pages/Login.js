@@ -9,16 +9,36 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    // 🚨 check rỗng (tránh lỗi 422)
+    if (!username || !password) {
+      alert("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
     try {
+      console.log("Sending:", { username, password }); // debug
+
       const res = await axios.post("/auth/login", {
-        username,
-        password,
+        username: username,
+        password: password,
       });
 
+      console.log("Response:", res.data);
+
+      // lưu token
       localStorage.setItem("token", res.data.access_token);
+
+      alert("Đăng nhập thành công!");
       navigate("/gallery");
     } catch (err) {
-      alert("Sai tài khoản hoặc mật khẩu!");
+      console.log("Login error:", err.response?.data);
+
+      // hiển thị lỗi backend nếu có
+      if (err.response?.data?.detail) {
+        alert(err.response.data.detail);
+      } else {
+        alert("Sai tài khoản hoặc mật khẩu!");
+      }
     }
   };
 
@@ -30,6 +50,7 @@ function Login() {
         <input
           className="auth-input"
           placeholder="Tên đăng nhập"
+          value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
 
@@ -37,6 +58,7 @@ function Login() {
           className="auth-input"
           type="password"
           placeholder="Mật khẩu"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 

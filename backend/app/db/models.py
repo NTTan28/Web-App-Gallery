@@ -25,6 +25,8 @@ class Photo(Base):
     image_url = Column(String)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 
+    likes = Column(Integer, default=0)  # ❤️ THÊM DÒNG NÀY
+
     user_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="photos")
