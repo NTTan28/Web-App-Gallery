@@ -24,6 +24,31 @@ function Gallery() {
     fetchPhotos();
   };
 
+  // ⬇️ DOWNLOAD (FIX CHUẨN)
+  const handleDownload = async (imageUrl) => {
+    try {
+      const res = await axios.get(`/${imageUrl}`, {
+        responseType: "blob", // 🔥 bắt buộc
+      });
+
+      const blob = new Blob([res.data]);
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = imageUrl.split("/").pop();
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.log("Download lỗi:", err);
+      alert("Download thất bại!");
+    }
+  };
+
   // ❌ DELETE
   const handleDelete = async (id) => {
     await axios.delete(`/photos/${id}`);
@@ -129,7 +154,12 @@ function Gallery() {
               ❤️ Like
             </button>
 
-            {/* ❌ DELETE + CONFIRM */}
+            {/* ⬇️ DOWNLOAD */}
+            <button onClick={() => handleDownload(p.image_url)}>
+              ⬇️ Download
+            </button>
+
+            {/* ❌ DELETE */}
             <button
               onClick={() => {
                 if (window.confirm(`Bạn có chắc muốn xóa ảnh "${p.title}"?`)) {

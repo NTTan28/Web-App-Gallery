@@ -1,70 +1,148 @@
-# Getting Started with Create React App
+# INFO
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- Name: Nguyễn Huỳnh Nhật Tân
+- Student Code: 23650801
 
-## Available Scripts
+### PART 1
 
-In the project directory, you can run:
+Tiến hành Build
 
-### `npm start`
+- Project FastAPI hoàn chỉnh
+- Kết nối DB SQLite
+- ORM bằng SQLAlchemy
+- Tạo **User + Photo models**
+- Chạy được:
+  `http://127.0.0.1:8000/docs`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Chưa làm auth, chưa làm API → chỉ setup nền
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- pip install fastapi uvicorn sqlalchemy
+- run: python -m uvicorn app.main:app --reload
+- Port:
+  - http://127.0.0.1:8000/
+  - http://127.0.0.1:8000/docs#/
 
-### `npm test`
+### PART 2
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Nội Dung
 
-### `npm run build`
+- Register (tạo user)
+- Login (trả JWT)
+- Hash password
+- Xác thực bằng token
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Thư Viện:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- pip install python-jose passlib[bcrypt]
+- pip install "pydantic[email]"
+  Hoặc
+- pip install email-validator
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+##### TEST:
 
-### `npm run eject`
+{
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- "username": "tan",
+- "email": "tan@gmail.com",
+- "password": "1234aaaa"
+  }
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### PART 3
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Nội Dung
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Upload ảnh thật (lưu vào server)
+- CRUD Photo:
+  - Create (upload)
+  - Read (list + detail)
+  - Update
+  - Delete
+- Search theo title
+- Bảo vệ API (chỉ user sở hữu mới thao tác được)
 
-## Learn More
+##### TEST:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Mở POST /auth/login -> nhấn try it ou
+2. Nhập tên, gmail, pass -> nhấn excute
+3. Kết quả:
+   - {
+     - "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+     - "token_type": "bearer"
+   - }
+4. Copy access_token
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+5. bấm authorize
+6. Nhập: Bearer <paste*token_vào*đây>
+7. Nhấn Authorize (phải có chữ Bear + Space + Token)
+8. Upload file ảnh, nếu thành công sẽ hiện
+   {
+   "id": 1,
+   "title": "Ảnh test",
+   "description": "Test upload",
+   "image_url": "uploads/abc123.jpg",
+   "user_id": 1
+   }
+9. Truy cập: http://127.0.0.1:8000/uploads/abc123.jpg
+10. kiểm tra folder uploads sẽ thấy ảnh đã upload lên
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+11. Gọi GET /photos/ (chỉ users nào uploads ảnh mới thấy)
+    [
+    {
+    "id": 1,
+    "title": "Ảnh test",
+    "user_id": 1
+    }
+    ]
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+12. Gọi: GET /photos/search/?title=Ảnh ---> Trả về ảnh có chữ “Ảnh” trong title
+13. Gọi: PUT /photos/{photo_id} (Ví dụ: PUT /photos/1) ---> DB updated, gọi GET thấy dữ liệu mới
+14. Gọi: DELETE /photos/1 (Database: record biến mất; Folder: file ảnh bị xóa)
 
-### Making a Progressive Web App
+### PART 4:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Cài đặt:
 
-### Advanced Configuration
+- Đường dẫn: D:\PTUD\Web-App-Gallery\frontend>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+* npx create-react-app . (tạo folder frontend nhưng chưa có src)
+* (HOẶC) Nếu chưa có frontend, npx create-react-app gallery-frontend
 
-### Deployment
+cài đặt chạy thư viện:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- npm install axios react-router-dom
 
-### `npm run build` fails to minify
+###### Chạy chương trình
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Vào backend: python -m uvicorn app.main:app --reload
+- Vào frontend: npm start
+
+---
+
+### Library, Setup for Exam
+
+1. pip install python-jose passlib[bcrypt]
+
+python.exe -m pip install --upgrade pip
+
+2. pip install "pydantic[email]"
+
+Frontend:
+
+3. npm install axios react-router-dom
+
+- npm install -g npm@11.12.1
+- npm install -g npm@11.12.1
+
+CHẠY: 4. pip install uvicorn 5. pip install fastapi 6. pip install sqlalchemy 7. pip install python-multipart
+
+- pip install bcrypt
+
+8. pip uninstall bcrypt -y
+9. pip install bcrypt==3.2.2
+
+- python -m uvicorn app.main:app --reload
+- npm start

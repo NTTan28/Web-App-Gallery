@@ -6,16 +6,22 @@ UPLOAD_DIR = "uploads"
 
 
 def save_file(file: UploadFile):
-    # Tạo tên file unique
+    # 🔥 tạo folder nếu chưa có
+    if not os.path.exists(UPLOAD_DIR):
+        os.makedirs(UPLOAD_DIR)
+
+    # 🔥 tạo tên file unique
     ext = file.filename.split(".")[-1]
     filename = f"{uuid.uuid4()}.{ext}"
+
     file_path = os.path.join(UPLOAD_DIR, filename)
 
-    # Lưu file
+    # 🔥 lưu file
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())
 
-    return file_path
+    # 🔥 QUAN TRỌNG NHẤT (FIX DOWNLOAD)
+    return f"uploads/{filename}"
 
 
 def delete_file(file_path: str):
